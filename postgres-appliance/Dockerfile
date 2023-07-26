@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.3-labs
 ARG BASE_IMAGE=ubuntu:22.04
 ARG PGVERSION=15
 ARG TIMESCALEDB="1.7.5 2.3.1 2.11.1"
@@ -48,10 +49,10 @@ ARG TIMESCALEDB
 ARG TIMESCALEDB_APACHE_ONLY=true
 ARG TIMESCALEDB_TOOLKIT=true
 ARG COMPRESS
-ARG PGOLDVERSIONS="10 11 12 13 14"
+ARG PGOLDVERSIONS=""
 ARG WITH_PERL=false
 
-ARG DEB_PG_SUPPORTED_VERSIONS="$PGOLDVERSIONS $PGVERSION"
+ARG DEB_PG_SUPPORTED_VERSIONS="$PGVERSION"
 
 # Install PostgreSQL, extensions and contribs
 ENV POSTGIS_VERSION=3.3 \
@@ -83,6 +84,12 @@ WORKDIR /
 
 RUN bash /builddeps/patroni_wale.sh
 
+COPY build_scripts/plrust.sh /builddeps/
+
+ENV PGHOME=/home/postgres \
+    RW_DIR=/run
+RUN bash /builddeps/plrust.sh
+
 RUN if [ "$COMPRESS" = "true" ]; then bash /builddeps/compress_build.sh; fi
 
 
@@ -102,7 +109,7 @@ ARG COMPRESS
 EXPOSE 5432 8008 8080
 
 ENV LC_ALL=en_US.utf-8 \
-    PATH=$PATH:/usr/lib/postgresql/$PGVERSION/bin \
+    PATH=$PATH:/usr/lib/postgresql/$PGVERSION/bin:/$PGHOME/.cargo/bin \
     PGHOME=/home/postgres \
     RW_DIR=/run \
     TIMESCALEDB=$TIMESCALEDB \
