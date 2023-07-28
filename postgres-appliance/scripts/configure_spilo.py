@@ -307,6 +307,7 @@ postgresql:
     ssl_key_file: {{SSL_PRIVATE_KEY_FILE}}
     shared_preload_libraries: 'bg_mon,pg_stat_statements,pgextwlist,pg_auth_mon,set_user,plrust'
     plrust.work_dir: '/tmp'
+    plrust.path_override: '/home/postgres/.cargo/bin:/usr/bin'
     bg_mon.listen_address: '{{BGMON_LISTEN_IP}}'
     bg_mon.history_buckets: 120
     pg_stat_statements.track_utility: 'off'

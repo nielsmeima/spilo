@@ -38,16 +38,18 @@ export CARGO_HOME=$PGHOME/.cargo
 
 rustup default 1.70.0
 
-git clone --depth 1 --branch v1.2.3 https://github.com/tcdi/plrust.git /src
+export PLRUST=$PGHOME/.plrust
+git clone --depth 1 --branch v1.2.3 https://github.com/tcdi/plrust.git $PLRUST
 
-cd /src
+cd $PLRUST
 
 PGRX_VERSION=$(cargo metadata --format-version 1 | jq -r '.packages[]|select(.name=="pgrx")|.version') && \
     cargo install cargo-pgrx --force --version "$PGRX_VERSION" && \
     rustup component add llvm-tools-preview rustc-dev && \
-    cd /src/plrustc && ./build.sh && cp ../build/bin/plrustc $PGHOME/.cargo/bin && \
+    cd $PLRUST/plrustc && ./build.sh && cp ../build/bin/plrustc $PGHOME/.cargo/bin && \
     cargo pgrx init --pg15 $(which pg_config) && \
-    cd /src/plrust && STD_TARGETS="$(uname -m)-postgres-linux-gnu" ./build && \
+    cd $PLRUST/plrust && STD_TARGETS="$(uname -m)-postgres-linux-gnu" ./build && \
     cargo pgrx install --release --features trusted && \
-    cd /src && find . -type d -name target | xargs rm -r && \
-    rustup component remove llvm-tools-preview rustc-dev
+    cd $PLRUST && find . -type d -name target | xargs rm -r
+    # && \
+    # rustup component remove llvm-tools-preview rustc-dev

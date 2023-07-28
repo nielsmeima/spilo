@@ -92,10 +92,8 @@ RUN bash /builddeps/plrust.sh
 
 RUN if [ "$COMPRESS" = "true" ]; then bash /builddeps/compress_build.sh; fi
 
-
 FROM scratch as builder-true
 COPY --from=builder-false / /
-
 
 FROM builder-${COMPRESS}
 
