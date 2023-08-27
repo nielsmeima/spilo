@@ -50,6 +50,5 @@ PGRX_VERSION=$(cargo metadata --format-version 1 | jq -r '.packages[]|select(.na
     cargo pgrx init --pg15 $(which pg_config) && \
     cd $PLRUST/plrust && STD_TARGETS="$(uname -m)-postgres-linux-gnu" ./build && \
     cargo pgrx install --release --features trusted && \
-    cd $PLRUST && find . -type d -name target | xargs rm -r
-    # && \
-    # rustup component remove llvm-tools-preview rustc-dev
+    cd $PLRUST && find . -type d -name target | xargs rm -r && \
+    rustup component remove llvm-tools-preview rustc-dev
